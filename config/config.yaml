@@ -1,0 +1,151 @@
+# Somatic variant calling pipeline configuration
+# Author: Jiyang Jaing
+# Date: April 1, 2025
+
+# Output directory
+output_directory: "results"
+
+# Reference genome (hg19 or hg38)
+reference_genome: "hg38"
+
+# Target regions BED file (leave empty for WGS)
+target_regions: "" # Path to BED file for targeted sequencing
+
+# Effective genome size for TMB calculation
+effective_genome_size: 2800000000  # ~2.8Gb for human exome
+
+# Is this exome sequencing? (Used by Strelka2)
+is_exome: "false"  # Set to "true" for exome data
+
+# Sample information
+samples:
+  tumor1:
+    patient: "patient1"
+    sample_type: "tumor"
+  normal1:
+    patient: "patient1"
+    sample_type: "normal"
+  tumor2:
+    patient: "patient2"
+    sample_type: "tumor"
+
+# Read units
+units:
+  tumor1:
+    fq1: "data/tumor1_R1.fastq.gz"
+    fq2: "data/tumor1_R2.fastq.gz"
+  normal1:
+    fq1: "data/normal1_R1.fastq.gz"
+    fq2: "data/normal1_R2.fastq.gz"
+  tumor2:
+    fq1: "data/tumor2_R1.fastq.gz"
+    fq2: "data/tumor2_R2.fastq.gz"
+
+# Variant callers to use (comment out to disable)
+variant_callers:
+  - "mutect2"
+  - "vardict"
+  - "freebayes"
+  - "lofreq"
+  - "strelka2"
+  - "varscan2"
+  # - "deepvariant"  # Uncomment to enable
+
+# Variant annotators to use
+variant_annotators:
+  - "funcotator"
+  - "vep"
+  - "snpeff"
+  # - "annovar"  # Uncomment to enable
+
+# Minimum callers agreement for merging
+min_callers_agreement: 2
+
+# Resources for variant calling
+known_sites:
+  - "resources/dbsnp_146.hg38.vcf.gz"
+  - "resources/1000G_phase1.snps.high_confidence.hg38.vcf.gz"
+  - "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
+
+# Resources for mutect2
+germline_resource: "resources/af-only-gnomad.hg38.vcf.gz"
+panel_of_normals: "resources/1000g_pon.hg38.vcf.gz"
+
+# Resources for annotation
+funcotator_data_sources: "resources/funcotator_dataSources"
+vep_cache: "resources/vep_cache"
+snpeff_db: "resources/snpeff_db"
+annovar_db: "resources/annovar_db"
+snpeff_genome: "GRCh38.p13"
+
+# Filtering parameters
+min_depth: 10
+min_alt_reads: 3
+min_af: 0.05
+min_qual: 20
+
+# Tool-specific parameters
+## VarDict
+vardict_min_af: "0.01"
+vardict_min_reads: "4"
+
+## FreeBayes
+freebayes_min_af: "0.01"
+freebayes_min_ao: "5"
+
+## LoFreq
+lofreq_min_af: "0.01"
+lofreq_min_bq: "30"
+
+## VarScan2
+varscan_min_af: "0.01"
+varscan_min_coverage: "8"
+varscan_p_value: "0.05"
+varscan_strand_filter: "1"
+
+## DeepVariant
+deepvariant_model_type: "WGS"  # WGS, WES, or PACBIO
+
+# VEP parameters
+vep_species: "homo_sapiens"
+vep_assembly: "GRCh38"
+vep_plugins: "Mastermind,REVEL,dbNSFP"
+
+# ANNOVAR parameters
+annovar_protocol: "refGene,ensGene,knownGene,avsnp150,gnomad211_exome,clinvar_20221231"
+annovar_operation: "g,g,g,f,f,f"
+annovar_build: "hg38"
+
+# Optuna optimization parameters (when enabled)
+optuna:
+  enabled: false
+  n_trials: 100
+  study_name: "somatic_pipeline_optimization"
+  parameters:
+    # BWA-MEM2 parameters
+    bwa_match_score: [1, 5]
+    bwa_mismatch_penalty: [4, 10]
+    bwa_gap_open_penalty: [6, 15]
+    bwa_gap_extension_penalty: [1, 5]
+    
+    # MuTect2 parameters
+    mutect2_tumor_lod: [3.0, 6.5]
+    mutect2_normal_lod: [2.0, 4.5]
+    
+    # VarDict parameters
+    vardict_min_allele_freq: [0.005, 0.02]
+    vardict_min_var_depth: [3, 6]
+    
+    # FreeBayes parameters
+    freebayes_min_alt_fraction: [0.005, 0.02]
+    freebayes_min_alt_count: [3, 6]
+    
+    # LoFreq parameters
+    lofreq_min_coverage: [5, 15]
+    lofreq_sig_threshold: [0.01, 0.05]
+    
+    # Filtering parameters
+    filter_min_depth: [8, 20]
+    filter_min_alt_reads: [2, 5]
+    filter_min_af: [0.01, 0.10]
+
