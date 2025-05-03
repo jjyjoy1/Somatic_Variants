@@ -1,0 +1,35 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base
+  - bioconductor-bsgenome
+  - bioconductor-mutationalpatterns
+  - r-ggplot2
+  - r-tidyr
+  - r-dplyr
+  - fastqc = v0.12.1
+  - multiqc = 1.17
+  - fastp = 0.24.1
+  - bwa-mem2 = 2.2.1
+  - samtools = 1.18
+  - picard = 3.4.0
+  - gatk4 = 4.6.2.0-0
+  - vardict = 1.8.3
+  - openjdk = 17.0.14-internal
+  - freebayes = v1.3.6
+  - lofreq = 2.1.5
+  - strelka = 2.9.10
+  - varscan = v2.4.6
+  - vcftools = 0.1.16
+  - bcftools = 1.21
+  - vep = 113
+  - snpeff = 5.2 
+  - annovar = 2022-10-05
+  - qualimap = v.2.3
+  - python = 3.6.13
+  - mosdepth = 0.3.3
+  - rtg = 3.12.1
+  - optuna = 3.1.0
+  
