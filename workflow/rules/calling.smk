@@ -26,8 +26,11 @@ rule mutect2:
     log:
         f"{OUTDIR}/logs/gatk/mutect2/{{sample}}.log"
     threads: 8
-    conda:
-        "../envs/gatk.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         gatk --java-options "{params.java_opts}" Mutect2 \
@@ -63,8 +66,11 @@ rule vardict:
     log:
         f"{OUTDIR}/logs/vardict/{{sample}}.log"
     threads: 8
-    conda:
-        "../envs/vardict.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Create bed file if not provided
@@ -120,8 +126,11 @@ rule freebayes:
     threads: 8
     log:
         f"{OUTDIR}/logs/freebayes/{{sample}}.log"
-    conda:
-        "../envs/freebayes.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Run FreeBayes
@@ -160,8 +169,11 @@ rule lofreq:
     threads: 8
     log:
         f"{OUTDIR}/logs/lofreq/{{sample}}.log"
-    conda:
-        "../envs/lofreq.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Run LoFreq
@@ -201,8 +213,11 @@ rule strelka2:
     threads: 8
     log:
         f"{OUTDIR}/logs/strelka2/{{sample}}.log"
-    conda:
-        "../envs/strelka2.yaml"
+    envmodules:
+        "strelka/v2.9.10",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Configure Strelka2
@@ -268,8 +283,11 @@ rule varscan2:
     threads: 4
     log:
         f"{OUTDIR}/logs/varscan2/{{sample}}.log"
-    conda:
-        "../envs/varscan.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Generate mpileup
@@ -350,8 +368,11 @@ rule merge_vcfs:
         input_string=lambda wildcards, input: " ".join(input.vcfs)
     log:
         f"{OUTDIR}/logs/bcftools/merge/{{sample}}.log"
-    conda:
-        "../envs/variants.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Merge VCFs with metadata about which caller identified each variant

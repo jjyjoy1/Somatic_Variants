@@ -28,8 +28,8 @@ dependencies:
   - snpeff = 5.2 
   - annovar = 2022-10-05
   - qualimap = v.2.3
-  - python = 3.6.13
+  - python = 3.12.10
   - mosdepth = 0.3.3
   - rtg = 3.12.1
   - optuna = 3.1.0
-  
+  - snakemake = 9.3.3

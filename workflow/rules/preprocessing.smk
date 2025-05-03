@@ -16,8 +16,11 @@ rule create_recalibration_table:
         java_opts="-Xmx16g"
     log:
         f"{OUTDIR}/logs/gatk/bqsr/{{sample}}.recal_table.log"
-    conda:
-        "../envs/gatk.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         gatk --java-options "{params.java_opts}" BaseRecalibrator \
@@ -40,8 +43,11 @@ rule apply_bqsr:
         java_opts="-Xmx16g"
     log:
         f"{OUTDIR}/logs/gatk/bqsr/{{sample}}.apply_bqsr.log"
-    conda:
-        "../envs/gatk.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         gatk --java-options "{params.java_opts}" ApplyBQSR \
@@ -67,8 +73,11 @@ rule create_interval_lists:
         java_opts="-Xmx4g"
     log:
         f"{OUTDIR}/logs/picard/interval_list.log"
-    conda:
-        "../envs/mapping.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         if [ -f "{input.target_bed}" ]; then
@@ -96,8 +105,11 @@ rule split_intervals:
         java_opts="-Xmx4g"
     log:
         f"{OUTDIR}/logs/gatk/split_intervals.log"
-    conda:
-        "../envs/gatk.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         mkdir -p {output.intervals}

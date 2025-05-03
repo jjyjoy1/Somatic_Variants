@@ -20,8 +20,11 @@ rule trim_reads_fastp:
     threads: 8
     log:
         f"{OUTDIR}/logs/fastp/{{sample}}.log"
-    conda:
-        "../envs/preprocessing.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt    
     shell:
         """
         fastp --in1 {input.r1[0]} \
@@ -54,8 +57,11 @@ rule bwa_mem_align:
     threads: 16
     log:
         f"{OUTDIR}/logs/bwa/{{sample}}.log"
-    conda:
-        "../envs/mapping.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         bwa mem -t {threads} \
@@ -73,8 +79,11 @@ rule sort_bam:
     threads: 8
     log:
         f"{OUTDIR}/logs/samtools/sort/{{sample}}.log"
-    conda:
-        "../envs/mapping.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         samtools sort -@ {threads} -o {output} {input} 2> {log}
@@ -113,8 +122,11 @@ rule index_bam:
         "{prefix}.bam.bai"
     log:
         f"{OUTDIR}/logs/samtools/index/{{prefix}}.log"
-    conda:
-        "../envs/mapping.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt    
     shell:
         """
         samtools index {input} {output} 2> {log}

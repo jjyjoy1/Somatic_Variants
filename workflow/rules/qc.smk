@@ -16,8 +16,11 @@ rule fastqc:
     log:
         f"{OUTDIR}/logs/fastqc/{{sample}}.log"
     threads: 4
-    conda:
-        "../envs/qc.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         mkdir -p {params.outdir}
@@ -39,8 +42,11 @@ rule multiqc:
         config="config/multiqc_config.yaml"
     log:
         f"{OUTDIR}/logs/multiqc/multiqc.log"
-    conda:
-        "../envs/qc.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         multiqc --force --outdir {params.outdir} --config {params.config} {OUTDIR} 2> {log}
@@ -58,8 +64,11 @@ rule bam_qc_qualimap:
     log:
         f"{OUTDIR}/logs/qualimap/{{sample}}.log"
     threads: 8
-    conda:
-        "../envs/qc.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         mkdir -p {params.outdir}
@@ -84,8 +93,11 @@ rule vcf_qc_bcftools:
         options=lambda wildcards: "--samples " + wildcards.sample
     log:
         f"{OUTDIR}/logs/bcftools/stats/{{sample}}.{{caller}}.log"
-    conda:
-        "../envs/variants.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         bcftools stats {params.options} \
@@ -107,8 +119,11 @@ rule vcf_qc_report:
         outdir=f"{OUTDIR}/qc/vcf"
     log:
         f"{OUTDIR}/logs/vcf_report/{{sample}}.log"
-    conda:
-        "../envs/report.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/vcf_report.R"
 
@@ -125,7 +140,10 @@ rule calculate_tmb:
         genome_size=config.get("effective_genome_size", 2800000000)
     log:
         f"{OUTDIR}/logs/tmb/{{sample}}.{{caller}}.log"
-    conda:
-        "../envs/variants.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/calculate_tmb.py"

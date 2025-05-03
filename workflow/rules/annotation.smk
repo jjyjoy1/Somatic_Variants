@@ -20,8 +20,11 @@ rule funcotator:
         transcript_selection=config.get("funcotator_transcript_selection", "CANONICAL")
     log:
         lambda wildcards: f"{OUTDIR}/logs/gatk/funcotator/{wildcards.sample}.merged.log" if MERGE_VCFS else f"{OUTDIR}/logs/gatk/funcotator/{wildcards.sample}.{wildcards.caller}.log"
-    conda:
-        "../envs/gatk.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt    
     shell:
         """
         gatk --java-options "{params.java_opts}" Funcotator \
@@ -54,8 +57,11 @@ rule vep:
     threads: 8
     log:
         lambda wildcards: f"{OUTDIR}/logs/vep/{wildcards.sample}.merged.log" if MERGE_VCFS else f"{OUTDIR}/logs/vep/{wildcards.sample}.{wildcards.caller}.log"
-    conda:
-        "../envs/vep.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         vep --input_file {input.vcf} \
@@ -112,8 +118,11 @@ rule snpeff:
         extra=config.get("snpeff_extra_args", "")
     log:
         lambda wildcards: f"{OUTDIR}/logs/snpeff/{wildcards.sample}.merged.log" if MERGE_VCFS else f"{OUTDIR}/logs/snpeff/{wildcards.sample}.{wildcards.caller}.log"
-    conda:
-        "../envs/snpeff.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt    
     shell:
         """
         # Decompress VCF for snpEff
@@ -152,8 +161,11 @@ rule annovar:
         build=config.get("annovar_build", "hg38")
     log:
         lambda wildcards: f"{OUTDIR}/logs/annovar/{wildcards.sample}.merged.log" if MERGE_VCFS else f"{OUTDIR}/logs/annovar/{wildcards.sample}.{wildcards.caller}.log"
-    conda:
-        "../envs/annovar.yaml"
+    envmodules:
+        "openjdk/v23.02",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         # Convert VCF to ANNOVAR format

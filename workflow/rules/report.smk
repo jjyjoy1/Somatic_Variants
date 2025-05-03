@@ -25,8 +25,11 @@ rule sample_report:
         outdir=f"{OUTDIR}/reports/{{sample}}"
     log:
         f"{OUTDIR}/logs/report/{{sample}}.log"
-    conda:
-        "../envs/report.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/generate_report.R"
 
@@ -45,8 +48,11 @@ rule project_report:
         outdir=f"{OUTDIR}/reports"
     log:
         f"{OUTDIR}/logs/report/project.log"
-    conda:
-        "../envs/report.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/project_report.R"
 
@@ -58,8 +64,11 @@ rule workflow_diagram:
         configfile="config/config.yaml"
     log:
         f"{OUTDIR}/logs/report/workflow_diagram.log"
-    conda:
-        "../envs/snakemake.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     shell:
         """
         snakemake --configfile {params.configfile} \
@@ -82,8 +91,11 @@ rule variant_comparison:
         outdir=f"{OUTDIR}/reports/{{sample}}"
     log:
         f"{OUTDIR}/logs/report/comparison/{{sample}}.log"
-    conda:
-        "../envs/report.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/variant_comparison.R"
 
@@ -100,8 +112,11 @@ rule mutational_signatures:
         outdir=f"{OUTDIR}/reports/{{sample}}"
     log:
         f"{OUTDIR}/logs/report/signatures/{{sample}}.log"
-    conda:
-        "../envs/signatures.yaml"
+    envmodules:
+        "somatics_variants_bundle/v0.1.0",
+    resources:
+        mem_mb=lambda wildcards, attempt: 16000 * attempt,
+        runtime=lambda wildcards, attempt: 60 * 4 * attempt
     script:
         "../scripts/mutational_signatures.R"
 
